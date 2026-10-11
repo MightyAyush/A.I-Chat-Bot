@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  sweet-mistral-bot:
+    build: .
+    container_name: sweet_mistral_bot
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data

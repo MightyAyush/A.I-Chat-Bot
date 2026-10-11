@@ -1,0 +1,4 @@
+kurigram
+aiohttp
+cachetools
+python-dotenv

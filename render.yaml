@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: sweet-mistral-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: MASTER_BOT_TOKEN
+        sync: false
+      - key: MISTRAL_AI
+        sync: false
+      - key: OWNER_IDS
+        sync: false
+      - key: LOGGER_GROUP_ID
+        sync: false
+      - key: PORT
+        value: 10000
