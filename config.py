@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_ID: int = int(os.getenv("API_ID", "32901283"))
-API_HASH: str = os.getenv("API_HASH", "4a330ad3bb00eb9fdc96d5641e28f83d")
-BOT_TOKEN: str = os.getenv("MASTER_BOT_TOKEN", "7921523663:AAHpCzGY7UY-zdPfeSwI7VE0iuj0nDMyeQo")
+API_ID: int = int(os.getenv("API_ID"))
+API_HASH: str = os.getenv("API_HASH")
+BOT_TOKEN: str = os.getenv("MASTER_BOT_TOKEN")
 
-MISTRAL_API_KEY: str = os.getenv("MISTRAL_AI", "mstrl_T2Ks20Mjot1TTJgnHsmlLi9QzZl5EplB_2EYihO")
+MISTRAL_API_KEY: str = os.getenv("MISTRAL_AI")
 
 _raw_owners = os.getenv("OWNER_IDS", "[7467775243]")
 try:
@@ -21,7 +21,7 @@ try:
 except Exception:
     OWNER_IDS: List[int] = [7467775243]
 
-LOGGER_GROUP_ID: int = int(os.getenv("LOGGER_GROUP_ID", "-1004318545679"))
+LOGGER_GROUP_ID: int = int(os.getenv("LOGGER_GROUP_ID"))
 
 PORT: int = int(os.getenv("PORT", "8080"))
 HOST: str = os.getenv("HOST", "0.0.0.0")
