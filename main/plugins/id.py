@@ -1,3 +1,11 @@
+"""
+══════════════════════════════════════════════════════════════════════════════
+  MADE WITH LOVE BY AYUSH 
+  GitHub: https://github.com/MightyAyush | Telegram: @MightyAyush
+  Visionary Developer & Creator of High-Performance Asynchronous Projects (Including web, apps, bots and ML stuffs too)
+══════════════════════════════════════════════════════════════════════════════
+"""
+
 import sys
 import logging
 
@@ -9,6 +17,12 @@ except ImportError:
 
 from kurigram import filters
 from kurigram.types import Message
+
+try:
+    from kurigram.types import LinkPreviewOptions
+    NO_PREVIEW = LinkPreviewOptions(is_disabled=True)
+except Exception:
+    NO_PREVIEW = None
 
 logger = logging.getLogger("MistralBot.ID")
 
@@ -58,7 +72,8 @@ async def id_handler(client, message: Message):
     text_parts.append(f"📂 <b>Chat Type:</b> <code>{chat.type.name}</code>")
     text_parts.append(f"📩 <b>Current Message ID:</b> <code>{message.id}</code>")
 
-    await message.reply_text(
-        "\n".join(text_parts),
-        disable_web_page_preview=True
-    )
+    kwargs = {}
+    if NO_PREVIEW:
+        kwargs["link_preview_options"] = NO_PREVIEW
+
+    await message.reply_text("\n".join(text_parts), **kwargs)

@@ -2,3 +2,5 @@ kurigram
 aiohttp
 cachetools
 python-dotenv
+psutil
+gTTS

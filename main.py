@@ -1,3 +1,11 @@
+"""
+══════════════════════════════════════════════════════════════════════════════
+  MADE WITH LOVE BY AYUSH 
+  GitHub: https://github.com/MightyAyush | Telegram: @MightyAyush
+  Visionary Developer & Creator of High-Performance Asynchronous Projects (Including web, apps, bots and ML stuffs too)
+══════════════════════════════════════════════════════════════════════════════
+"""
+
 import sys
 import asyncio
 import logging
@@ -23,6 +31,8 @@ import config
 from main.client.bot import Bot
 from main.services.cache_service import cache
 from main.services.mistral_service import mistral_service
+from main.services.groq_service import groq_service
+from main.services.token_tracker import token_tracker
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,11 +46,17 @@ async def handle_root(request: web.Request) -> web.Response:
     bot_instance: Bot = request.app["bot"]
     data = {
         "status": "online",
-        "service": "Mistral AI Flirty Anime Chat Bot",
+        "service": "AI Anime Companion Bot",
+        "dev": "Ayush (@MightyAyush)",
+        "github": "https://github.com/MightyAyush",
         "bot_username": bot_instance.me.username if bot_instance.me else None,
         "uptime": bot_instance.uptime if bot_instance else "0s",
-        "active_model": config.ai_settings.model,
+        "provider": config.ai_settings.provider.upper(),
+        "mistral_model": config.ai_settings.mistral_model,
+        "groq_model": config.ai_settings.groq_model,
+        "voice_mode": config.ai_settings.voice_mode,
         "temperature": config.ai_settings.temperature,
+        "tokens": token_tracker.get_stats(),
         "cache": stats
     }
     return web.json_response(data)
@@ -79,6 +95,7 @@ async def main():
         logger.info("Shutting down...")
         await bot.stop()
         await mistral_service.close()
+        await groq_service.close()
         await runner.cleanup()
 
 if __name__ == "__main__":

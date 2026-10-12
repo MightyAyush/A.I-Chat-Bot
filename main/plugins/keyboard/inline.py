@@ -1,3 +1,11 @@
+"""
+══════════════════════════════════════════════════════════════════════════════
+  MADE WITH LOVE BY AYUSH 
+  GitHub: https://github.com/MightyAyush | Telegram: @MightyAyush
+  Visionary Developer & Creator of High-Performance Asynchronous Projects (Including web, apps, bots and ML stuffs too)
+══════════════════════════════════════════════════════════════════════════════
+"""
+
 import sys
 import re
 
@@ -32,7 +40,8 @@ def start_keyboard(is_owner: bool = False) -> InlineKeyboardMarkup:
             InlineKeyboardButton("ℹ️ About Me", callback_data="about_menu")
         ],
         [
-            InlineKeyboardButton("⚡ Bot Ping & Status", callback_data="ping_status")
+            InlineKeyboardButton("⚡ Bot Ping & Status", callback_data="ping_status"),
+            InlineKeyboardButton("👑 Creator", url="https://t.me/MightyAyush")
         ]
     ]
     if is_owner:
@@ -48,25 +57,83 @@ def back_to_start_keyboard() -> InlineKeyboardMarkup:
 
 def settings_main_keyboard() -> InlineKeyboardMarkup:
     temp_display = f"{config.ai_settings.temperature}"
-    model_display = config.ai_settings.model.split("-")[0].capitalize()
+    voice_display = "ON 🎙️" if config.ai_settings.voice_mode else "OFF 💬"
+    provider_display = config.ai_settings.provider.upper()
     
     buttons = [
         [
-            InlineKeyboardButton(f"🌡️ Temperature: {temp_display}", callback_data="setting_temp_menu"),
-            InlineKeyboardButton(f"🤖 Model: {model_display}", callback_data="setting_model_menu")
+            InlineKeyboardButton(f"🤖 Engine: {provider_display}", callback_data="setting_provider_menu"),
+            InlineKeyboardButton("🧩 Models", callback_data="setting_model_menu")
         ],
         [
-            InlineKeyboardButton("📝 Edit / View Prompt", callback_data="setting_prompt_menu"),
-            InlineKeyboardButton(f"🔢 Tokens: {config.ai_settings.max_tokens}", callback_data="setting_tokens_menu")
+            InlineKeyboardButton(f"🌡️ Temp: {temp_display}", callback_data="setting_temp_menu"),
+            InlineKeyboardButton(f"🎙️ Voice: {voice_display}", callback_data="setting_toggle_voice")
         ],
         [
-            InlineKeyboardButton("⚡ Cache Stats & Flush", callback_data="setting_cache_menu"),
-            InlineKeyboardButton("🔄 Reset Defaults", callback_data="setting_reset_all")
+            InlineKeyboardButton("🔑 Manage API Keys", callback_data="setting_apikeys_menu"),
+            InlineKeyboardButton("📝 Edit Prompt", callback_data="setting_prompt_menu")
         ],
         [
-            InlineKeyboardButton("❌ Close Settings", callback_data="close_menu")
+            InlineKeyboardButton(f"🔢 Tokens: {config.ai_settings.max_tokens}", callback_data="setting_tokens_menu"),
+            InlineKeyboardButton("⚡ Cache Stats", callback_data="setting_cache_menu")
+        ],
+        [
+            InlineKeyboardButton("📊 System & AI Stats", callback_data="view_stats_callback"),
+            InlineKeyboardButton("🔄 Reset All", callback_data="setting_reset_all")
+        ],
+        [
+            InlineKeyboardButton("❌ Close", callback_data="close_menu")
         ]
     ]
+    return InlineKeyboardMarkup(buttons)
+
+def api_keys_keyboard() -> InlineKeyboardMarkup:
+    buttons = [
+        [
+            InlineKeyboardButton("✏️ Set Mistral API Key", callback_data="set_key_mistral"),
+            InlineKeyboardButton("✏️ Set Groq API Key", callback_data="set_key_groq")
+        ],
+        [
+            InlineKeyboardButton("🔙 Back to Settings", callback_data="settings_main")
+        ]
+    ]
+    return InlineKeyboardMarkup(buttons)
+
+def provider_keyboard() -> InlineKeyboardMarkup:
+    curr = config.ai_settings.provider
+    def mark(val, title):
+        return f"✅ {title}" if curr == val else title
+
+    buttons = [
+        [
+            InlineKeyboardButton(mark("auto", "Auto (Smart Failover)"), callback_data="set_provider_auto")
+        ],
+        [
+            InlineKeyboardButton(mark("mistral", "Mistral AI"), callback_data="set_provider_mistral"),
+            InlineKeyboardButton(mark("groq", "Groq AI"), callback_data="set_provider_groq")
+        ],
+        [
+            InlineKeyboardButton("🔙 Back to Settings", callback_data="settings_main")
+        ]
+    ]
+    return InlineKeyboardMarkup(buttons)
+
+def models_keyboard() -> InlineKeyboardMarkup:
+    buttons = []
+    curr_mistral = config.ai_settings.mistral_model
+    curr_groq = config.ai_settings.groq_model
+
+    buttons.append([InlineKeyboardButton("--- Mistral Free Models ---", callback_data="noop")])
+    for m in config.MISTRAL_MODELS:
+        prefix = "✅ " if m == curr_mistral else "▫️ "
+        buttons.append([InlineKeyboardButton(f"{prefix}{m}", callback_data=f"set_model_m_{m}")])
+
+    buttons.append([InlineKeyboardButton("--- Groq Free Models ---", callback_data="noop")])
+    for g in config.GROQ_MODELS:
+        prefix = "✅ " if g == curr_groq else "▫️ "
+        buttons.append([InlineKeyboardButton(f"{prefix}{g}", callback_data=f"set_model_g_{g}")])
+
+    buttons.append([InlineKeyboardButton("🔙 Back to Settings", callback_data="settings_main")])
     return InlineKeyboardMarkup(buttons)
 
 def temperature_keyboard(current_temp: float) -> InlineKeyboardMarkup:
@@ -90,18 +157,6 @@ def temperature_keyboard(current_temp: float) -> InlineKeyboardMarkup:
             InlineKeyboardButton("🔙 Back to Settings", callback_data="settings_main")
         ]
     ]
-    return InlineKeyboardMarkup(buttons)
-
-def models_keyboard(current_model: str) -> InlineKeyboardMarkup:
-    buttons = []
-    for model_name in config.AVAILABLE_MODELS:
-        prefix = "✅ " if model_name == current_model else "▫️ "
-        buttons.append([
-            InlineKeyboardButton(f"{prefix}{model_name}", callback_data=f"set_model_{model_name}")
-        ])
-    buttons.append([
-        InlineKeyboardButton("🔙 Back to Settings", callback_data="settings_main")
-    ])
     return InlineKeyboardMarkup(buttons)
 
 def prompt_keyboard() -> InlineKeyboardMarkup:
